@@ -110,7 +110,7 @@ MonoBehaviour:
   itemsToDrop:
   - {fileID: 6030540734624439818, guid: 3da10fc37568bea4888ac98ae6b8b8ac, type: 3}
   - {fileID: 6107076207835859405, guid: 5b50ee28dfc7af844991274042f4d709, type: 3}
-  dropChance: 30
+  dropChance: 10
 --- !u!50 &2087812559621846967
 Rigidbody2D:
   serializedVersion: 5

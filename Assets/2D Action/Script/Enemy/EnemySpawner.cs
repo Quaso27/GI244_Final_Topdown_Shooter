@@ -1,53 +1,84 @@
 using UnityEngine;
-using System.Collections; // ต้องมีบรรทัดนี้เพื่อใช้คำสั่งรอ (Coroutine)
+using System.Collections;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
-    public float spawnDistance = 12f;
+    [Header("Scaling Constants")]
+    public float monsterDensityFactor = 1.2f; // ยิ่งมาก มอนยิ่งเพิ่มเร็วแบบทวีคูณ
+    public float timeScalingFactor = 0.8f;    // ยิ่งน้อย เวลาจะบีบคั้นขึ้นในเวฟหลังๆ
 
-    public int currentWave = 0;
-    private int enemiesToSpawn;
-    private bool isSpawning = false;
+    [Header("Base Settings")]
+    public GameObject enemyPrefab;
+    public int currentWave = 1;
+    public float baseWaveTime = 15f;
+    public int initialEnemies = 5;
+
+    private float waveTimer;
+    private bool waitingForNextWave = false;
+
+    public float minSpawnRadius = 12f; // ระยะห่างขั้นต่ำ (ให้อยู่นอกขอบจอ)
+    public float maxSpawnRadius = 15f;
+
+    void Start() => StartNewWave();
 
     void Update()
     {
-        // เช็คว่าศัตรูในฉากตายหมดหรือยัง และไม่ได้กำลังเสกเวฟใหม่อยู่
-        int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        if (waitingForNextWave) return;
 
-        if (currentEnemies <= 0 && !isSpawning)
-        {
-            StartCoroutine(StartNextWave());
-        }
+        int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        waveTimer -= Time.deltaTime;
+
+        if (currentEnemies <= 0)
+            StartCoroutine(NextWaveRoutine(5f));
+        else if (waveTimer <= 0)
+            StartCoroutine(NextWaveRoutine(0f));
     }
 
-    IEnumerator StartNextWave()
+    void StartNewWave()
     {
-        isSpawning = true;
-        currentWave++; // เพิ่มเลขเวฟ
+        // 1. คำนวณจำนวนมอนสเตอร์ (Exponential)
+        // สูตร: มอนสเตอร์จะเพิ่มขึ้นแบบก้าวกระโดดในเวฟหลังๆ
+        int countToSpawn = initialEnemies + Mathf.RoundToInt(Mathf.Pow(currentWave, monsterDensityFactor));
 
-        Debug.Log("เริ่ม Wave: " + currentWave);
+        // 2. คำนวณเวลาแบบ Scaled (ใช้ Log เพื่อไม่ให้เวลานานเกินไปจนน่าเบื่อ)
+        // สูตร: เวลาพื้นฐาน + (จำนวนมอนสเตอร์ ^ 0.8)
+        float dynamicTime = baseWaveTime + Mathf.Pow(countToSpawn, timeScalingFactor);
+        waveTimer = dynamicTime;
 
-        // สูตรคำนวณจำนวนศัตรู (เช่น เวฟที่ 1 มี 5 ตัว, เวฟ 2 มี 8 ตัว)
-        enemiesToSpawn = 2 + (currentWave * 3);
+        Debug.Log($"Wave {currentWave}: {countToSpawn} Enemies | Time: {dynamicTime:F1}s");
 
-        // รอสัก 2 วินาทีก่อนเริ่มเสก (ให้ผู้เล่นเตรียมตัว)
-        yield return new WaitForSeconds(2f);
+        for (int i = 0; i < countToSpawn; i++) SpawnEnemy();
+    }
 
-        for (int i = 0; i < enemiesToSpawn; i++)
-        {
-            SpawnEnemy();
-            // เวลาระหว่างเสกแต่ละตัวในเวฟเดียวกัน (ยิ่งเวฟสูง ยิ่งเสกไวขึ้น)
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        isSpawning = false;
+    // ... ส่วนของ NextWaveRoutine และ SpawnEnemy เหมือนเดิม ...
+    IEnumerator NextWaveRoutine(float delay)
+    {
+        waitingForNextWave = true;
+        yield return new WaitForSeconds(delay);
+        currentWave++;
+        StartNewWave();
+        waitingForNextWave = false;
     }
 
     void SpawnEnemy()
     {
-        Vector2 randomPos = Random.insideUnitCircle.normalized * spawnDistance;
-        Vector3 spawnPos = new Vector3(randomPos.x, randomPos.y, 0f) + transform.position;
+        // 1. หาตำแหน่งของผู้เล่น
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Vector3 playerPos = (player != null) ? player.transform.position : Vector3.zero;
+
+        // 2. สุ่มมุม 360 องศา (เป็นเรเดียน)
+        float angle = Random.Range(0f, Mathf.PI * 2);
+
+        // 3. สุ่มระยะห่างระหว่างรัศมีขั้นต่ำและสูงสุด
+        float distance = Random.Range(minSpawnRadius, maxSpawnRadius);
+
+        // 4. คำนวณจุดเกิดจากมุมและระยะทาง (สูตรตรีโกณมิติ)
+        float spawnX = Mathf.Cos(angle) * distance;
+        float spawnY = Mathf.Sin(angle) * distance;
+
+        Vector3 spawnPos = new Vector3(playerPos.x + spawnX, playerPos.y + spawnY, 0);
+
+        // 5. เสกมอนสเตอร์
         Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
     }
 }

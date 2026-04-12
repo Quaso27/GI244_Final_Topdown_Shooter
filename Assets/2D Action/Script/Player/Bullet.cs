@@ -17,6 +17,7 @@ public class Bullet : MonoBehaviour
         if (hitInfo.CompareTag("Enemy"))
         {
             GameManager.instance.AddScore(10);
+            GameManager.instance.AddKills();
             Destroy(hitInfo.gameObject);
             Destroy(gameObject);
         }    
