@@ -62,23 +62,26 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        // 1. หาตำแหน่งของผู้เล่น
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        Vector3 playerPos = (player != null) ? player.transform.position : Vector3.zero;
+        Vector3 spawnPos = Vector3.zero;
+        bool isValidPosition = false;
+        int maxAttemptes = 20;
+        int attempts = 0;
 
-        // 2. สุ่มมุม 360 องศา (เป็นเรเดียน)
-        float angle = Random.Range(0f, Mathf.PI * 2);
+        while (!isValidPosition && attempts < maxAttemptes)
+        {
+            float randomX = Random.Range(-20f, 18f);
+            float randomY = Random.Range(-7f, 5f);
+            spawnPos = new Vector3(randomX, randomY, 0);
 
-        // 3. สุ่มระยะห่างระหว่างรัศมีขั้นต่ำและสูงสุด
-        float distance = Random.Range(minSpawnRadius, maxSpawnRadius);
+            Vector3 screenPoint = Camera.main.WorldToViewportPoint(spawnPos);
+            bool isOffScreen = screenPoint.x < 0 || screenPoint.x > 1 || screenPoint.y < 0 || screenPoint.y > 1;
 
-        // 4. คำนวณจุดเกิดจากมุมและระยะทาง (สูตรตรีโกณมิติ)
-        float spawnX = Mathf.Cos(angle) * distance;
-        float spawnY = Mathf.Sin(angle) * distance;
-
-        Vector3 spawnPos = new Vector3(playerPos.x + spawnX, playerPos.y + spawnY, 0);
-
-        // 5. เสกมอนสเตอร์
+            if (isOffScreen)
+            { 
+                isValidPosition = true;            
+            }
+            attempts++;
+        }
         Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
     }
 }
