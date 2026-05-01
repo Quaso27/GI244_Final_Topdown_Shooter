@@ -3,85 +3,156 @@ using System.Collections;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Scaling Constants")]
-    public float monsterDensityFactor = 1.2f; // ยิ่งมาก มอนยิ่งเพิ่มเร็วแบบทวีคูณ
-    public float timeScalingFactor = 0.8f;    // ยิ่งน้อย เวลาจะบีบคั้นขึ้นในเวฟหลังๆ
+    [System.Serializable]
+    public class EnemyType
+    {
+        public GameObject enemyPrefab;
+        public int weight;
+    }
 
-    [Header("Base Settings")]
-    public GameObject enemyPrefab;
+    [Header("Enemy Configuration")]
+    public EnemyType[] enemies;
+    public int initialEnemies = 5;
     public int currentWave = 1;
     public float baseWaveTime = 15f;
-    public int initialEnemies = 5;
+
+    [Header("Layer Settings")]
+    public LayerMask floorLayer;
+    public LayerMask wallLayer;
+    public LayerMask enemyLayer;
 
     private float waveTimer;
     private bool waitingForNextWave = false;
+    private int totalToSpawn;
+    private int totalKilled;
+    private Transform player;
 
-    public float minSpawnRadius = 12f; // ระยะห่างขั้นต่ำ (ให้อยู่นอกขอบจอ)
-    public float maxSpawnRadius = 15f;
+    void Start()
+    {
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null) player = p.transform;
 
-    void Start() => StartNewWave();
+        // กันพลาด: ถ้าไม่ได้ตั้ง Layer ใน Inspector ให้ดึงจากชื่อ "Enemy"
+        if (enemyLayer == 0) enemyLayer = LayerMask.GetMask("Enemy");
+
+        StartNewWave();
+    }
 
     void Update()
     {
-        if (waitingForNextWave) return;
+        if (waitingForNextWave || player == null) return;
 
-        int currentEnemies = GameObject.FindGameObjectsWithTag("Enemy").Length;
         waveTimer -= Time.deltaTime;
+        int currentEnemiesInScene = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
-        if (currentEnemies <= 0)
-            StartCoroutine(NextWaveRoutine(5f));
-        else if (waveTimer <= 0)
-            StartCoroutine(NextWaveRoutine(0f));
+        // จบเวฟเมื่อฆ่าครบ หรือ เวลาในเวฟหมด
+        if ((currentEnemiesInScene <= 0 && totalKilled >= totalToSpawn) || waveTimer <= 0)
+        {
+            StartCoroutine(NextWaveRoutine(waveTimer <= 0 ? 0f : 0.5f));
+        }
     }
 
     void StartNewWave()
     {
-        // 1. คำนวณจำนวนมอนสเตอร์ (Exponential)
-        // สูตร: มอนสเตอร์จะเพิ่มขึ้นแบบก้าวกระโดดในเวฟหลังๆ
-        int countToSpawn = initialEnemies + Mathf.RoundToInt(Mathf.Pow(currentWave, monsterDensityFactor));
+        totalKilled = 0;
+        totalToSpawn = initialEnemies + Mathf.RoundToInt(Mathf.Pow(currentWave, 1.2f));
+        waveTimer = baseWaveTime + Mathf.Pow(totalToSpawn, 0.8f);
 
-        // 2. คำนวณเวลาแบบ Scaled (ใช้ Log เพื่อไม่ให้เวลานานเกินไปจนน่าเบื่อ)
-        // สูตร: เวลาพื้นฐาน + (จำนวนมอนสเตอร์ ^ 0.8)
-        float dynamicTime = baseWaveTime + Mathf.Pow(countToSpawn, timeScalingFactor);
-        waveTimer = dynamicTime;
-
-        Debug.Log($"Wave {currentWave}: {countToSpawn} Enemies | Time: {dynamicTime:F1}s");
-
-        for (int i = 0; i < countToSpawn; i++) SpawnEnemy();
+        Debug.Log($"Wave {currentWave} Started! Target: {totalToSpawn} Enemies.");
+        StartCoroutine(SpawnWaveRoutine(totalToSpawn));
     }
 
-    // ... ส่วนของ NextWaveRoutine และ SpawnEnemy เหมือนเดิม ...
-    IEnumerator NextWaveRoutine(float delay)
+    IEnumerator SpawnWaveRoutine(int count)
     {
-        waitingForNextWave = true;
-        yield return new WaitForSeconds(delay);
-        currentWave++;
-        StartNewWave();
-        waitingForNextWave = false;
+        for (int i = 0; i < count; i++)
+        {
+            SpawnEnemy();
+            yield return new WaitForSeconds(0.15f);
+        }
     }
+
+    public void RecordEnemyDeath() { totalKilled++; }
 
     void SpawnEnemy()
     {
-        Vector3 spawnPos = Vector3.zero;
+        GameObject prefab = GetRandomEnemyByWeight();
+        if (prefab == null) return;
+
         bool isValidPosition = false;
-        int maxAttemptes = 20;
         int attempts = 0;
+        Vector3 finalSpawnPos = Vector3.zero;
 
-        while (!isValidPosition && attempts < maxAttemptes)
+        // พยายามสุ่มหาที่ว่างรอบตัวผู้เล่น
+        while (!isValidPosition && attempts < 50)
         {
-            float randomX = Random.Range(-20f, 18f);
-            float randomY = Random.Range(-7f, 5f);
-            spawnPos = new Vector3(randomX, randomY, 0);
-
-            Vector3 screenPoint = Camera.main.WorldToViewportPoint(spawnPos);
-            bool isOffScreen = screenPoint.x < 0 || screenPoint.x > 1 || screenPoint.y < 0 || screenPoint.y > 1;
-
-            if (isOffScreen)
-            { 
-                isValidPosition = true;            
-            }
             attempts++;
+
+            // ใช้การสุ่มมุม 360 องศาเพื่อให้กระจายตัวทั่วแผนที่ ไม่กองที่จุดใดจุดหนึ่ง
+            float randomAngle = Random.Range(0f, 360f);
+            Vector3 direction = new Vector3(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad), 0);
+            float randomDist = Random.Range(11f, 15f); // ระยะที่พ้นขอบจอพอดีแต่ไม่ไกลเกินไป
+
+            Vector3 candidatePos = player.position + (direction * randomDist);
+
+            // 1. เช็คว่าอยู่นอกสายตา
+            Vector3 viewportPos = Camera.main.WorldToViewportPoint(candidatePos);
+            bool isOffScreen = viewportPos.x < -0.05f || viewportPos.x > 1.05f || viewportPos.y < -0.05f || viewportPos.y > 1.05f;
+
+            // 2. เช็คว่าอยู่บนพื้น และ ไม่ชนกำแพง
+            bool onFloor = Physics2D.OverlapCircle(candidatePos, 0.3f, floorLayer);
+            bool noWall = !Physics2D.OverlapCircle(candidatePos, 0.3f, wallLayer);
+
+            // 3. เช็คว่าไม่ทับกับมอนสเตอร์ตัวอื่น (Overlap Check)
+            bool noEnemyOverlap = !Physics2D.OverlapCircle(candidatePos, 0.8f, enemyLayer);
+
+            if (isOffScreen && onFloor && noWall && noEnemyOverlap)
+            {
+                finalSpawnPos = candidatePos;
+                isValidPosition = true;
+            }
         }
-        Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+
+        if (isValidPosition)
+        {
+            Instantiate(prefab, finalSpawnPos, Quaternion.identity);
+        }
+    }
+
+    GameObject GetRandomEnemyByWeight()
+    {
+        int totalWeight = 0;
+        foreach (var enemy in enemies) totalWeight += enemy.weight;
+        if (totalWeight == 0) return null;
+
+        int randomValue = Random.Range(0, totalWeight);
+        int currentWeight = 0;
+        foreach (var enemy in enemies)
+        {
+            currentWeight += enemy.weight;
+            if (randomValue < currentWeight) return enemy.enemyPrefab;
+        }
+        return null;
+    }
+
+    IEnumerator NextWaveRoutine(float delay)
+    {
+        if (waitingForNextWave) yield break;
+        waitingForNextWave = true;
+
+        yield return new WaitForSeconds(delay);
+
+        if (AugmentManager.instance != null)
+        {
+            AugmentManager.instance.OnWaveCleared(currentWave);
+            // หยุดรอจนกว่าผู้เล่นจะเลือกการ์ดเสร็จ (เมนูปิดลง)
+            while (AugmentManager.instance.isMenuOpen)
+            {
+                yield return null;
+            }
+        }
+
+        currentWave++;
+        StartNewWave();
+        waitingForNextWave = false;
     }
 }

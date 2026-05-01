@@ -1,65 +1,72 @@
 using System.Collections;
+using System.Collections.Generic; // ต้องใช้ List
 using UnityEngine;
 
 public class ItemSlowEnemy : MonoBehaviour
 {
-    public float slowAmount = 2f;    // จะเอาความเร็วศัตรูมา "ลบ" ออกเท่าไหร่
-    public float duration = 5f;      // ระยะเวลาสโลว์
-    public float despawnTime = 10f;  // เวลาที่ไอเทมจะหายไปเองถ้าไม่เก็บ
+    public float slowAmount = 2f;
+    public float duration = 5f;
+    public float despawnTime = 10f;
+
+    private bool isCollected = false;
 
     private void Start()
     {
-        // ให้ไอเทมหายไปเองถ้าไม่มีคนเก็บ
-        Destroy(gameObject, despawnTime);
+        // ใช้ Invoke เพื่อให้ยกเลิกได้ชัวร์กว่า Destroy ตรงๆ
+        Invoke("SelfDestroy", despawnTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isCollected)
         {
-            // ยกเลิกการลบตัวเองทิ้ง เพื่อให้ Coroutine ทำงานจนจบ
-            CancelInvoke();
+            isCollected = true;
+            CancelInvoke("SelfDestroy");
 
-            StartCoroutine(SlowRoutine());
-
-            // ซ่อนไอเทมทันที
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
+
+            StartCoroutine(SlowRoutine());
         }
+    }
+
+    private void SelfDestroy()
+    {
+        if (!isCollected) Destroy(gameObject);
     }
 
     IEnumerator SlowRoutine()
     {
-        // 1. หาศัตรูทุกตัวในฉากที่มีสคริปต์ EnemyFollow
-        EnemyFollow[] enemies = Object.FindObjectsByType<EnemyFollow>(FindObjectsSortMode.None);
+        // เก็บรายชื่อมอนสเตอร์ที่ "โดนลดความเร็วไปจริงๆ" ไว้ในลิสต์
+        List<EnemySlime> slowedSlimes = new List<EnemySlime>();
 
-        // 2. ลดความเร็วศัตรูทุกตัวที่เจอ
-        foreach (EnemyFollow enemy in enemies)
+        EnemyBase[] enemies = Object.FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+
+        foreach (EnemyBase enemy in enemies)
         {
-            if (enemy != null)
+            if (enemy is EnemySlime slime)
             {
-                enemy.speed -= slowAmount;
-                // ป้องกันไม่ให้ความเร็วติดลบ (ถ้าติดลบศัตรูจะเดินถอยหลัง)
-                if (enemy.speed < 0.5f) enemy.speed = 0.5f;
+                slime.moveSpeed -= slowAmount;
+                if (slime.moveSpeed < 0.5f) slime.moveSpeed = 0.5f;
+
+                slowedSlimes.Add(slime); // บันทึกไว้ว่าตัวนี้โดนสโลว์นะ
             }
         }
 
-        Debug.Log("Enemies Slowed down!");
+        Debug.Log($"Slowed down {slowedSlimes.Count} enemies!");
 
-        // 3. รอจนครบเวลา
         yield return new WaitForSeconds(duration);
 
-        // 4. คืนความเร็ว (ต้องหาใหม่อีกรอบ เพราะอาจมีศัตรูตัวเก่าที่ยังไม่ตายเหลืออยู่)
-        EnemyFollow[] enemiesToRestore = Object.FindObjectsByType<EnemyFollow>(FindObjectsSortMode.None);
-        foreach (EnemyFollow enemy in enemiesToRestore)
+        // คืนความเร็ว "เฉพาะตัวที่อยู่ในลิสต์" และ "ยังไม่ตาย" เท่านั้น
+        foreach (EnemySlime slime in slowedSlimes)
         {
-            if (enemy != null)
+            if (slime != null) // เช็กว่ามอนสเตอร์ยังไม่ถูก Destroy ไปก่อน
             {
-                enemy.speed += slowAmount;
+                slime.moveSpeed += slowAmount;
             }
         }
 
-        Debug.Log("Enemies back to normal speed.");
+        Debug.Log("Restored speed to original enemies.");
         Destroy(gameObject);
     }
 }

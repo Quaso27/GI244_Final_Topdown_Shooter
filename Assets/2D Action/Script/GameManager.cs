@@ -1,114 +1,180 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [Header("Stats")]
+    [Header("Session Stats")]
     public int score = 0;
-    public int health = 3;
     public int enemiesKilled = 0;
-    public float timer = 0f;
+    public int gold = 0;
+    public int sessionGold = 0;
+    private float timer = 0f;
 
-    [Header("HUD UI")]
+    [Header("In-Game HUD UI")]
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI healthText;
+    public TextMeshProUGUI goldText;
+
+    [Header("Pause & Upgrade UI")]
+    public GameObject pauseMenuPanel; 
+    public GameObject upgradePanel;  
 
     [Header("Results UI Groups")]
-    public GameObject resultsPanel;      // แผงใหญ่สุด (GameOverPanel ใน Hierarchy)
-    public GameObject mainGameOverGroup; // หน้าแรก: คำว่า GAME OVER + ปุ่ม Quit
-    public GameObject resultsGroup;      // หน้าสอง: สถิติ Survived/Kills + ปุ่ม DONE
+    public GameObject resultsPanel;
+    public GameObject mainGameOverGroup;
+    public GameObject resultsGroup;
 
-    [Header("Results Texts")]
+    [Header("Results Display (Stats)")]
     public TextMeshProUGUI resTimeText;
     public TextMeshProUGUI resKillsText;
     public TextMeshProUGUI resWaveText;
+    public TextMeshProUGUI resGoldText;
+    public TextMeshProUGUI resSessionGoldText;
 
-    private bool isGameOver = false;
+    public bool isGameOver = false;
 
-    void Awake() { instance = this; }
+    void Awake()
+    {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+        LoadGold();
+    }
 
     void Start()
     {
+        Time.timeScale = 1f;
+        isGameOver = false;
         UpdateUI();
 
-        // ปิดหน้าจอ GameOver ทั้งหมดตอนเริ่มเกม
         if (resultsPanel != null) resultsPanel.SetActive(false);
+        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
+        if (upgradePanel != null) upgradePanel.SetActive(false);
     }
 
-    void Update()
+    void LateUpdate()
     {
-        if (!isGameOver)
+        // 1. เช็กสถานะหน้าจอ
+        bool isUpgradeOpen = (upgradePanel != null && upgradePanel.activeInHierarchy);
+        bool isOptionOpen = (pauseMenuPanel != null && pauseMenuPanel.activeInHierarchy);
+
+        // 2. ระบบเช็กปุ่ม Esc (เช็กเป็นอันดับท้ายๆ ของเฟรม)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            timer += Time.deltaTime;
+            if (!isUpgradeOpen && !isGameOver)
+            {
+                ToggleOptions();
+            }
+        }
+
+        if (isGameOver) return;
+
+        // 3. ระบบควบคุมเวลาและ Cursor
+        if (isOptionOpen || isUpgradeOpen)
+        {
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            // ใช้ unscaledDeltaTime เผื่อกรณีมีการหยุดเวลาจากที่อื่น
+            timer += Time.unscaledDeltaTime;
         }
     }
 
-    // แก้ Error CS1061: เพิ่มฟังก์ชัน AddScore เพื่อให้กระสุนเรียกใช้ได้
-    public void AddScore(int amount)
+    // ฟังก์ชันสำหรับปุ่มฟันเฟือง (Button) และ Esc
+    public void ToggleOptions()
     {
-        score += amount;
-        UpdateUI();
+        if (isGameOver) return;
+
+        if (pauseMenuPanel != null)
+        {
+            bool nextState = !pauseMenuPanel.activeSelf;
+            pauseMenuPanel.SetActive(nextState);
+
+            // ล้างค่า Focus เพื่อให้ปุ่มกดซ้ำได้ปกติ
+            if (EventSystem.current != null)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+
+            Debug.Log("GameManager: Toggle " + pauseMenuPanel.name + " to " + nextState);
+        }
+        else
+        {
+            Debug.LogError("GameManager: ลืมลาก OptionsPanel ใส่ใน Inspector!");
+        }
     }
 
-    public void AddKills()
+    public void CloseOptions()
     {
-        enemiesKilled++;
+        if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(false);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
-    public void TakeDamage(int damage)
-    {
-        health -= damage;
-        UpdateUI();
-        if (health <= 0 && !isGameOver) GameOver();
-    }
+    // --- ระบบจัดการ Score และ Gold ---
+    public void AddScore(int amount) { score += amount; UpdateUI(); }
+    public void AddKills() { enemiesKilled++; }
+    public void AddGold(int amount) { sessionGold += amount; UpdateUI(); }
 
-    void UpdateUI()
+    public void UpdateUI()
     {
         if (scoreText != null) scoreText.text = "Score : " + score;
-        if (healthText != null) healthText.text = "HP : " + health;
+        if (goldText != null) goldText.text = sessionGold.ToString();
     }
 
-    void GameOver()
+    // --- ระบบ Game Over และแสดงผลลัพธ์ ---
+    public void GameOver()
     {
+        if (isGameOver) return;
         isGameOver = true;
-        Time.timeScale = 0; // หยุดเวลาเกม
+        Time.timeScale = 0f;
 
-        // 1. คำนวณและอัปเดตสถิติ
+        if (DamageFlashEffect.instance != null) DamageFlashEffect.instance.StopAndClear();
+
+        gold += sessionGold;
+        SaveGold();
+        DisplayResults();
+
+        if (resultsPanel != null)
+        {
+            resultsPanel.SetActive(true);
+            mainGameOverGroup.SetActive(true);
+            resultsGroup.SetActive(false);
+        }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    void DisplayResults()
+    {
         int minutes = Mathf.FloorToInt(timer / 60);
         int seconds = Mathf.FloorToInt(timer % 60);
         if (resTimeText != null) resTimeText.text = string.Format("Survived: {0:00}:{1:00}", minutes, seconds);
         if (resKillsText != null) resKillsText.text = "Enemies Defeated: " + enemiesKilled;
+        if (resGoldText != null) resGoldText.text = gold.ToString();
+        if (resSessionGoldText != null) resSessionGoldText.text = "Gold Earned: " + sessionGold;
 
         var spawner = Object.FindFirstObjectByType<EnemySpawner>();
-        if (spawner != null && resWaveText != null)
-            resWaveText.text = "Level Reached: " + spawner.currentWave;
-
-        // 2. แสดงหน้าจอแรก (Game Over + Quit) ตามโครงสร้างใหม่
-        resultsPanel.SetActive(true);
-        mainGameOverGroup.SetActive(true);
-        resultsGroup.SetActive(false); // ซ่อนหน้าสถิติไว้ก่อน
+        if (spawner != null && resWaveText != null) resWaveText.text = "Level Reached: " + spawner.currentWave;
     }
 
-    // ฟังก์ชันสำหรับปุ่มที่จะกดเพื่อเปลี่ยนไปหน้า Results
     public void ShowResultsPage()
     {
-        mainGameOverGroup.SetActive(false); // ซ่อนหน้าแรก
-        resultsGroup.SetActive(true);       // โชว์หน้าสอง (ที่มีปุ่ม DONE)
+        if (mainGameOverGroup != null) mainGameOverGroup.SetActive(false);
+        if (resultsGroup != null) resultsGroup.SetActive(true);
     }
 
-    public void QuitGame()
-    {
-        Application.Quit();
-        Debug.Log("Game Exited");
-    }
-
-    // ฟังก์ชัน Restart (เผื่อคุณอยากใช้ในปุ่ม DONE)
-    public void RestartGame()
-    {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    public void SaveGold() { PlayerPrefs.SetInt("TotalGold", gold); PlayerPrefs.Save(); }
+    public void LoadGold() { gold = PlayerPrefs.GetInt("TotalGold", 0); }
+    public void RestartGame() { Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void QuitGame() { SaveGold(); Application.Quit(); }
 }

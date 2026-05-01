@@ -1,0 +1,1131 @@
+fileFormatVersion: 2
+guid: d6173a1d7cff9b342810b2fa29d8a300
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4124630333521368093
+    second: castle dungeon v01_0
+  - first:
+      213: 183968462745483406
+    second: castle dungeon v01_1
+  - first:
+      213: -1654178591698894687
+    second: castle dungeon v01_2
+  - first:
+      213: 8252271832456829415
+    second: castle dungeon v01_3
+  - first:
+      213: -7557088450271028583
+    second: castle dungeon v01_4
+  - first:
+      213: -2951600046979817528
+    second: castle dungeon v01_5
+  - first:
+      213: 8266913734349882124
+    second: castle dungeon v01_6
+  - first:
+      213: 636856882312406103
+    second: castle dungeon v01_7
+  - first:
+      213: 4752733059445625121
+    second: castle dungeon v01_8
+  - first:
+      213: -5868553296129985719
+    second: castle dungeon v01_9
+  - first:
+      213: -4571013175514208042
+    second: castle dungeon v01_10
+  - first:
+      213: -8647338457061194547
+    second: castle dungeon v01_11
+  - first:
+      213: 1223450065086365797
+    second: castle dungeon v01_12
+  - first:
+      213: 3226183942414022616
+    second: castle dungeon v01_13
+  - first:
+      213: -1996127051213789240
+    second: castle dungeon v01_14
+  - first:
+      213: -4256533673659566230
+    second: castle dungeon v01_15
+  - first:
+      213: 4232855259360331230
+    second: castle dungeon v01_16
+  - first:
+      213: -332846503694701642
+    second: castle dungeon v01_17
+  - first:
+      213: -8839446779543955340
+    second: castle dungeon v01_18
+  - first:
+      213: 2029532368037365353
+    second: castle dungeon v01_19
+  - first:
+      213: -8718684621439444785
+    second: castle dungeon v01_20
+  - first:
+      213: -2319438065421213114
+    second: castle dungeon v01_21
+  - first:
+      213: -2695120530050954508
+    second: castle dungeon v01_22
+  - first:
+      213: 7059423341619744640
+    second: castle dungeon v01_23
+  - first:
+      213: 3384685558113691938
+    second: castle dungeon v01_24
+  - first:
+      213: 7704473454337463250
+    second: castle dungeon v01_25
+  - first:
+      213: 4539090093055959501
+    second: castle dungeon v01_26
+  - first:
+      213: 5728184443986209989
+    second: castle dungeon v01_27
+  - first:
+      213: 2769701090379508904
+    second: castle dungeon v01_28
+  - first:
+      213: -855738244297920622
+    second: castle dungeon v01_29
+  - first:
+      213: 7726600546998941028
+    second: castle dungeon v01_30
+  - first:
+      213: 7604689714215160461
+    second: castle dungeon v01_31
+  - first:
+      213: -2131903418631433980
+    second: castle dungeon v01_32
+  - first:
+      213: 82352417619687294
+    second: castle dungeon v01_33
+  - first:
+      213: -5279382540250151886
+    second: castle dungeon v01_34
+  - first:
+      213: -2784668296403506282
+    second: castle dungeon v01_35
+  - first:
+      213: 7947538307927787673
+    second: castle dungeon v01_36
+  - first:
+      213: 7840265927293066951
+    second: castle dungeon v01_37
+  - first:
+      213: 6910889173970726966
+    second: castle dungeon v01_38
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: castle dungeon v01_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 143
+        width: 337
+        height: 209
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1497536f61ad3930800000000000000
+      internalID: 4124630333521368093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_1
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 343
+        width: 15
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e88b1d797569d8200800000000000000
+      internalID: 183968462745483406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_2
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 335
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a04bb6c55d2b09e0800000000000000
+      internalID: -1654178591698894687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_3
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 303
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e91d8b5285f58270800000000000000
+      internalID: 8252271832456829415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_4
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 271
+        width: 34
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99a5369f714df1790800000000000000
+      internalID: -7557088450271028583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_5
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 303
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cfddb0456fc907d0800000000000000
+      internalID: -2951600046979817528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_6
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 303
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0309bccd3af9b270800000000000000
+      internalID: 8266913734349882124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 127
+        width: 33
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7546ef2d5f196d800800000000000000
+      internalID: 636856882312406103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_8
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 207
+        width: 27
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1211388598915f140800000000000000
+      internalID: 4752733059445625121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_9
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 207
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94379bebed5be8ea0800000000000000
+      internalID: -5868553296129985719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_10
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 243
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d868d13cbf7090c0800000000000000
+      internalID: -4571013175514208042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_11
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 249
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc40b462d7b7ef780800000000000000
+      internalID: -8647338457061194547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_12
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 196
+        width: 26
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 560c6e12a519af010800000000000000
+      internalID: 1223450065086365797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_13
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 207
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d738abd335b5cc20800000000000000
+      internalID: 3226183942414022616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_14
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 207
+        width: 27
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c7aad9d5055c44e0800000000000000
+      internalID: -1996127051213789240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_15
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 196
+        width: 26
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6778070d21cde4c0800000000000000
+      internalID: -4256533673659566230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_16
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 223
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed501d78e6f1eba30800000000000000
+      internalID: 4232855259360331230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_17
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 208
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bbeb8e4edd716bf0800000000000000
+      internalID: -332846503694701642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_18
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 194
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 478df46ccf9f35580800000000000000
+      internalID: -8839446779543955340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_19
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 127
+        width: 34
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96646019fe85a2c10800000000000000
+      internalID: 2029532368037365353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_20
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 127
+        width: 34
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc8d076c782010780800000000000000
+      internalID: -8718684621439444785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_21
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 111
+        width: 66
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 642ac005e53bfcfd0800000000000000
+      internalID: -2319438065421213114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_22
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 79
+        width: 66
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fa43734822099ad0800000000000000
+      internalID: -2695120530050954508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_23
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 79
+        width: 66
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08f8854702c18f160800000000000000
+      internalID: 7059423341619744640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 47
+        width: 81
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 229e2cf0591d8fe20800000000000000
+      internalID: 3384685558113691938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_25
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 0
+        width: 34
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d3163369c9cbea60800000000000000
+      internalID: 7704473454337463250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_26
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 0
+        width: 66
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc16818f3661efe30800000000000000
+      internalID: 4539090093055959501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_27
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 63
+        width: 50
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cc67bf07699e7f40800000000000000
+      internalID: 5728184443986209989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_28
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 79
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ac251a9774ff6620800000000000000
+      internalID: 2769701090379508904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_29
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 0
+        width: 50
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29fe7e7c99ecf14f0800000000000000
+      internalID: -855738244297920622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_30
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 79
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 465f53d92466a3b60800000000000000
+      internalID: 7726600546998941028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_31
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8a8cd2f009498960800000000000000
+      internalID: 7604689714215160461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_32
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 0
+        width: 34
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4015805d225f962e0800000000000000
+      internalID: -2131903418631433980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_33
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 0
+        width: 34
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e77bd966613942100800000000000000
+      internalID: 82352417619687294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_34
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 0
+        width: 34
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2348dfe0d8ddbb6b0800000000000000
+      internalID: -5279382540250151886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_35
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 0
+        width: 66
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69ba39f20feda59d0800000000000000
+      internalID: -2784668296403506282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_36
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 32
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99848d2bbf35b4e60800000000000000
+      internalID: 7947538307927787673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_37
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 0
+        width: 13
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ced6e442583ecc60800000000000000
+      internalID: 7840265927293066951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: castle dungeon v01_38
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 0
+        width: 11
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6303e98961968ef50800000000000000
+      internalID: 6910889173970726966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      castle dungeon v01_0: 4124630333521368093
+      castle dungeon v01_1: 183968462745483406
+      castle dungeon v01_10: -4571013175514208042
+      castle dungeon v01_11: -8647338457061194547
+      castle dungeon v01_12: 1223450065086365797
+      castle dungeon v01_13: 3226183942414022616
+      castle dungeon v01_14: -1996127051213789240
+      castle dungeon v01_15: -4256533673659566230
+      castle dungeon v01_16: 4232855259360331230
+      castle dungeon v01_17: -332846503694701642
+      castle dungeon v01_18: -8839446779543955340
+      castle dungeon v01_19: 2029532368037365353
+      castle dungeon v01_2: -1654178591698894687
+      castle dungeon v01_20: -8718684621439444785
+      castle dungeon v01_21: -2319438065421213114
+      castle dungeon v01_22: -2695120530050954508
+      castle dungeon v01_23: 7059423341619744640
+      castle dungeon v01_24: 3384685558113691938
+      castle dungeon v01_25: 7704473454337463250
+      castle dungeon v01_26: 4539090093055959501
+      castle dungeon v01_27: 5728184443986209989
+      castle dungeon v01_28: 2769701090379508904
+      castle dungeon v01_29: -855738244297920622
+      castle dungeon v01_3: 8252271832456829415
+      castle dungeon v01_30: 7726600546998941028
+      castle dungeon v01_31: 7604689714215160461
+      castle dungeon v01_32: -2131903418631433980
+      castle dungeon v01_33: 82352417619687294
+      castle dungeon v01_34: -5279382540250151886
+      castle dungeon v01_35: -2784668296403506282
+      castle dungeon v01_36: 7947538307927787673
+      castle dungeon v01_37: 7840265927293066951
+      castle dungeon v01_38: 6910889173970726966
+      castle dungeon v01_4: -7557088450271028583
+      castle dungeon v01_5: -2951600046979817528
+      castle dungeon v01_6: 8266913734349882124
+      castle dungeon v01_7: 636856882312406103
+      castle dungeon v01_8: 4752733059445625121
+      castle dungeon v01_9: -5868553296129985719
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

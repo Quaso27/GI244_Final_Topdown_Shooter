@@ -5,15 +5,18 @@ TagManager:
   serializedVersion: 3
   tags:
   - Enemy
+  - EnemyProjectile
+  - Wall
+  - Item
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Walls
   - Water
   - UI
-  - 
-  - 
+  - Floor
+  - Enemy
   - 
   - 
   - 
@@ -44,6 +47,9 @@ TagManager:
     locked: 0
   - name: Map
     uniqueID: 29185153
+    locked: 0
+  - name: Player
+    uniqueID: 3599769711
     locked: 0
   m_RenderingLayers:
   - Default
