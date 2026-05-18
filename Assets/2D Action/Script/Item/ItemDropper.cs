@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class ItemDropper : MonoBehaviour
 {
@@ -7,23 +6,30 @@ public class ItemDropper : MonoBehaviour
     public class DropItem
     {
         public GameObject itemPrefab;
-        [Range(0, 100)] public float chance;
+        public float chance;
     }
 
-    public List<DropItem> lootTable = new List<DropItem>();
+    [Header("Loot Settings")]
+    [SerializeField]
+    private DropItem[] _lootTable; 
 
-    // ถูกเรียกอัตโนมัติจาก EnemyBase เมื่อ Die() ทำงาน
     public void OnEnemyDeath()
     {
-        foreach (var loot in lootTable)
+        if (_lootTable == null || _lootTable.Length == 0) return;
+
+        foreach (var loot in _lootTable)
         {
+            if (loot.itemPrefab == null || loot.chance <= 0) continue;
+
             if (Random.Range(0f, 100f) <= loot.chance)
             {
-                if (loot.itemPrefab != null)
-                {
-                    Instantiate(loot.itemPrefab, transform.position, Quaternion.identity);
-                }
+                SpawnItem(loot.itemPrefab);
             }
         }
+    }
+
+    private void SpawnItem(GameObject prefab)
+    {
+        Instantiate(prefab, transform.position, Quaternion.identity);
     }
 }

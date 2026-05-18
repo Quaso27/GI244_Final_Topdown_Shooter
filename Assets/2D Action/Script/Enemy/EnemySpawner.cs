@@ -32,7 +32,6 @@ public class EnemySpawner : MonoBehaviour
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null) player = p.transform;
 
-        // กันพลาด: ถ้าไม่ได้ตั้ง Layer ใน Inspector ให้ดึงจากชื่อ "Enemy"
         if (enemyLayer == 0) enemyLayer = LayerMask.GetMask("Enemy");
 
         StartNewWave();
@@ -45,7 +44,6 @@ public class EnemySpawner : MonoBehaviour
         waveTimer -= Time.deltaTime;
         int currentEnemiesInScene = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
-        // จบเวฟเมื่อฆ่าครบ หรือ เวลาในเวฟหมด
         if ((currentEnemiesInScene <= 0 && totalKilled >= totalToSpawn) || waveTimer <= 0)
         {
             StartCoroutine(NextWaveRoutine(waveTimer <= 0 ? 0f : 0.5f));
@@ -82,27 +80,20 @@ public class EnemySpawner : MonoBehaviour
         int attempts = 0;
         Vector3 finalSpawnPos = Vector3.zero;
 
-        // พยายามสุ่มหาที่ว่างรอบตัวผู้เล่น
         while (!isValidPosition && attempts < 50)
         {
             attempts++;
 
-            // ใช้การสุ่มมุม 360 องศาเพื่อให้กระจายตัวทั่วแผนที่ ไม่กองที่จุดใดจุดหนึ่ง
             float randomAngle = Random.Range(0f, 360f);
             Vector3 direction = new Vector3(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad), 0);
-            float randomDist = Random.Range(11f, 15f); // ระยะที่พ้นขอบจอพอดีแต่ไม่ไกลเกินไป
-
+            float randomDist = Random.Range(11f, 15f); 
             Vector3 candidatePos = player.position + (direction * randomDist);
-
-            // 1. เช็คว่าอยู่นอกสายตา
             Vector3 viewportPos = Camera.main.WorldToViewportPoint(candidatePos);
             bool isOffScreen = viewportPos.x < -0.05f || viewportPos.x > 1.05f || viewportPos.y < -0.05f || viewportPos.y > 1.05f;
 
-            // 2. เช็คว่าอยู่บนพื้น และ ไม่ชนกำแพง
             bool onFloor = Physics2D.OverlapCircle(candidatePos, 0.3f, floorLayer);
             bool noWall = !Physics2D.OverlapCircle(candidatePos, 0.3f, wallLayer);
 
-            // 3. เช็คว่าไม่ทับกับมอนสเตอร์ตัวอื่น (Overlap Check)
             bool noEnemyOverlap = !Physics2D.OverlapCircle(candidatePos, 0.8f, enemyLayer);
 
             if (isOffScreen && onFloor && noWall && noEnemyOverlap)
@@ -144,7 +135,7 @@ public class EnemySpawner : MonoBehaviour
         if (AugmentManager.instance != null)
         {
             AugmentManager.instance.OnWaveCleared(currentWave);
-            // หยุดรอจนกว่าผู้เล่นจะเลือกการ์ดเสร็จ (เมนูปิดลง)
+         
             while (AugmentManager.instance.isMenuOpen)
             {
                 yield return null;

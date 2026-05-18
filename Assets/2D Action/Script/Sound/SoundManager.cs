@@ -4,7 +4,6 @@ using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour
 {
-    // Singleton: ใช้ชื่อเดิมที่สคริปต์อื่นเรียกหา
     public static SoundManager instance;
 
     [Header("Audio Sources")]
@@ -20,7 +19,6 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        // ระบบ Singleton แบบสมบูรณ์
         if (instance == null)
         {
             instance = this;
@@ -40,10 +38,8 @@ public class SoundManager : MonoBehaviour
     {
         if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
 
-        // โหลดค่าระดับเสียงเดิม
         LoadSettings();
 
-        // เชื่อมต่อ Event ของ Slider
         if (musicSlider != null) musicSlider.onValueChanged.AddListener(SetMusicVolume);
         if (sfxSlider != null) sfxSlider.onValueChanged.AddListener(SetSFXVolume);
     }
@@ -90,12 +86,11 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlaySFX(AudioClip clip, float volume = 1f) // เพิ่ม float volume เข้าไป
+    public void PlaySFX(AudioClip clip, float volume = 1f) 
     {
         if (clip != null && sfxSource != null)
         {
             sfxSource.pitch = Random.Range(0.9f, 1.1f);
-            // ใช้ PlayOneShot โดยใส่ volume ที่รับมาจากมอนสเตอร์เข้าไป
             sfxSource.PlayOneShot(clip, volume);
         }
     }

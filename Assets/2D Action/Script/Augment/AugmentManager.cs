@@ -7,7 +7,6 @@ public class AugmentManager : MonoBehaviour
 {
     public static AugmentManager instance;
 
-    // ตัวแปรสำคัญสำหรับเช็คสถานะการเปิดเมนู
     public bool isMenuOpen = false;
 
     [Header("Augment Library")]
@@ -40,7 +39,7 @@ public class AugmentManager : MonoBehaviour
 
     public void StartAugmentSelection()
     {
-        isMenuOpen = true; // ตั้งสถานะว่าเมนูเปิดอยู่
+        isMenuOpen = true;
         Time.timeScale = 0f;
 
         if (augmentCanvas != null) augmentCanvas.SetActive(true);
@@ -74,13 +73,19 @@ public class AugmentManager : MonoBehaviour
 
     void SelectAugment(AugmentCard data)
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) data.ApplyEffect(player);
+        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
 
+        foreach (GameObject player in allPlayers)
+        {
+            if (player != null && player.activeInHierarchy)
+            {
+                data.ApplyEffect(player);
+            }
+        }
         if (augmentCanvas != null) augmentCanvas.SetActive(false);
 
         Time.timeScale = 1f;
-        isMenuOpen = false; // ปิดเมนูเพื่อให้ Spawner ทำงานต่อ
+        isMenuOpen = false;
     }
 
     void Update()

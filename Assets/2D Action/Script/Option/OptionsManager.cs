@@ -16,24 +16,21 @@ public class OptionsManager : MonoBehaviour
                 OpenOptions();
         }
     }
-    // ฟังก์ชันสำหรับปุ่ม Resume
     public void ResumeGame()
     {
         optionsPanel.SetActive(false);
-        Time.timeScale = 1f; // กลับมาเดินเกมต่อ
+        Time.timeScale = 1f; 
     }
 
-    // ฟังก์ชันสำหรับปุ่มเปิดหน้า Options (เรียกจากปุ่ม Gear ในหน้าหลัก)
     public void OpenOptions()
     {
         optionsPanel.SetActive(true);
-        Time.timeScale = 0f; // หยุดเกมชั่วคราวขณะตั้งค่า
+        Time.timeScale = 0f; 
     }
 
-    // ฟังก์ชันสำหรับปุ่ม Quit
     public void QuitGame()
     {
-        Application.Quit(); // ปิดเกม (ใช้ได้ตอน Build ออกมาแล้ว)
+        Application.Quit(); 
         Debug.Log("Quit Game");
     }
 }

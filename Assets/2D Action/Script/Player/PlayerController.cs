@@ -1,98 +1,231 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Multiplayer Settings")]
+    public bool isPlayerTwo = false; 
+
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public Camera cam;
-    private Rigidbody2D rb;
-    private Vector2 moveInput;
+    [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private Camera _cam;
+    private Rigidbody2D _rb;
+    private Vector2 _moveInput;
 
     [Header("Shooting & Skills")]
-    public GameObject bulletPrefab;
-    public GameObject homingBulletPrefab;
-    public Transform firePoint;
-    public AudioClip shootSound;
-    public AudioClip homingShootSound;
-    public Image cooldownImage;
-    public float skillCooldown = 5f;
-    private float cooldownTimer = 0f;
+    [SerializeField] private GameObject _bulletPrefab;
+    [SerializeField] private GameObject _homingBulletPrefab;
+    [SerializeField] private Transform _firePoint;
+    [SerializeField] private AudioClip _shootSound;
+    [SerializeField] private AudioClip _homingShootSound;
+    [SerializeField] private Image _cooldownImage;
+    [SerializeField] private float _skillCooldown = 5f;
+    private float _cooldownTimer = 0f;
     public bool hasHomingUpgrade = false;
 
     [Header("Augment: Charge Laser")]
     public bool hasChargeAugment = false;
-    public GameObject laserPrefab;
-    public float chargeTimeRequired = 1.0f;
-    public float laserRange = 25f;
+    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private float _chargeTimeRequired = 1.0f;
+    [SerializeField] private float _laserRange = 25f;
 
     [Header("Charge Audio & Effects")]
-    public AudioClip chargeSound;
-    public AudioClip laserShootSound;
-    public AudioMixerGroup sfxGroup;
-    private AudioSource chargeAudioSource;
+    [SerializeField] private AudioClip _chargeSound;
+    [SerializeField] private AudioClip _laserShootSound;
+    private AudioSource _chargeAudioSource;
+    [Range(0.01f, 0.5f)][SerializeField] private float _shakeMagnitude = 0.15f;
+    [SerializeField] private float _shakeSpeed = 60f;
 
-    [Header("Charge Shake Settings")]
-    [Range(0.01f, 0.5f)] public float shakeMagnitude = 0.15f;
-    public float shakeSpeed = 60f;
-
-    private float currentChargeTime = 0f;
-    private bool isCharging = false;
+    private float _currentChargeTime = 0f;
+    private bool _isCharging = false;
 
     [Header("Magnet / Pickup Settings")]
-    public float pickupRadius = 2.5f;
-    private CircleCollider2D magnetCollider;
+    [SerializeField] private float _pickupRadius = 2.5f;
+    private CircleCollider2D _magnetCollider;
 
     [Header("HP Regeneration System")]
-    public bool canRegen = true;
-    public float regenRate = 1.0f;
-    public int regenAmount = 1;
-    public float regenDelay = 3.0f;
-    private float lastDamageTime; // ใช้เก็บเวลาล่าสุดที่โดนโจมตี
+    [SerializeField] private bool _canRegen = true;
+    [SerializeField] private float _regenRate = 1.0f;
+    [SerializeField] private int _regenAmount = 1;
+    [SerializeField] private float _regenDelay = 3.0f;
+    private float _lastDamageTime;
 
     [Header("Audio (VFX/SFX)")]
-    public AudioClip hurtSound;
-    public AudioClip footstepClip;
-    public float footstepDelay = 0.3f;
-    private float footstepTimer;
-    private bool isStepReady = false;
+    [SerializeField] private AudioClip _hurtSound;
+    [SerializeField] private AudioClip _footstepClip;
+    [SerializeField] private float _footstepDelay = 0.3f;
+    private float _footstepTimer;
+    private bool _isStepReady = false;
 
     [Header("Internal References")]
-    [SerializeField] private Transform characterVisual;
-    private Vector3 visualInitialPos;
-    private PlayerHealth playerHealth;
+    [SerializeField] private Transform _characterVisual;
+    private Vector3 _visualInitialPos;
+    private PlayerHealth _playerHealth;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        playerHealth = GetComponent<PlayerHealth>();
+        _rb = GetComponent<Rigidbody2D>();
+        _playerHealth = GetComponent<PlayerHealth>();
 
-        if (cam == null) cam = Camera.main;
-        rb.freezeRotation = true;
+        if (_cam == null) _cam = Camera.main;
+        _rb.freezeRotation = true;
 
-        chargeAudioSource = gameObject.AddComponent<AudioSource>();
-        chargeAudioSource.playOnAwake = false;
-        chargeAudioSource.loop = true;
+        _chargeAudioSource = gameObject.AddComponent<AudioSource>();
+        _chargeAudioSource.playOnAwake = false;
+        _chargeAudioSource.loop = true;
 
-        if (SoundManager.instance != null && SoundManager.instance.sfxSource != null)
-            chargeAudioSource.outputAudioMixerGroup = SoundManager.instance.sfxSource.outputAudioMixerGroup;
-        else if (sfxGroup != null)
-            chargeAudioSource.outputAudioMixerGroup = sfxGroup;
+        if (_characterVisual == null && transform.childCount > 0)
+            _characterVisual = transform.GetChild(0);
 
-        if (characterVisual == null && transform.childCount > 0)
-            characterVisual = transform.GetChild(0);
-
-        if (characterVisual != null)
-            visualInitialPos = characterVisual.localPosition;
+        if (_characterVisual != null)
+            _visualInitialPos = _characterVisual.localPosition;
 
         SetupMagnet();
-
-        // เริ่ม Coroutine เดียวทิ้งไว้เลย มันจะทำงานเมื่อ canRegen เป็น true เอง
         StartCoroutine(RegenerateHealthLoop());
     }
+
+    void Update()
+    {
+        if (GameManager.instance != null && GameManager.instance.isGameOver) return;
+        if (Time.timeScale == 0f)
+        {
+            if (_isCharging) StopChargeEffects();
+            return;
+        }
+
+        // --- ระบบแยก Input P1 และ P2 ---
+        if (!isPlayerTwo)
+        {
+            // Player 1: Keyboard + Mouse
+            _moveInput.x = Input.GetAxisRaw("Horizontal");
+            _moveInput.y = Input.GetAxisRaw("Vertical");
+
+            bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+
+            if (Input.GetButtonDown("Fire1") && !_isCharging && !isPointerOverUI) Shoot();
+            if (Input.GetKeyDown(KeyCode.E) && _cooldownTimer <= 0 && hasHomingUpgrade) UseHomingSkill();
+            if (hasChargeAugment) HandleChargeAttack(isPointerOverUI);
+        }
+        else
+        {
+            // Player 2: Joystick / P2 Keys
+            _moveInput.x = Input.GetAxisRaw("HorizontalP2");
+            _moveInput.y = Input.GetAxisRaw("VerticalP2");
+
+            if (Input.GetButtonDown("FireP2") && !_isCharging) Shoot();
+            if (Input.GetButtonDown("SkillP2") && _cooldownTimer <= 0 && hasHomingUpgrade) UseHomingSkill();
+            if (hasChargeAugment) HandleChargeAttackP2(); 
+        }
+
+        HandleCooldownUI();
+        HandleFootstepSound();
+    }
+
+    void FixedUpdate()
+    {
+        if (GameManager.instance != null && GameManager.instance.isGameOver)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        float currentSpeed = _isCharging ? _moveSpeed * 0.4f : _moveSpeed;
+        _rb.linearVelocity = _moveInput.normalized * currentSpeed;
+
+        RotateTowardsInput(); 
+    }
+
+    // --- แก้ไขระบบหมุนตัวละคร ---
+    void RotateTowardsInput()
+    {
+        if (!isPlayerTwo)
+        {
+            if (_cam != null)
+            {
+                Vector3 worldMousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 lookDir = (Vector2)worldMousePos - _rb.position;
+                float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
+                _rb.rotation = angle;
+            }
+            else
+            {
+                _cam = Camera.main;
+            }
+        }
+        else
+        {
+            float aimX = Input.GetAxis("AimXP2");
+            float aimY = Input.GetAxis("AimYP2");
+
+            if (Mathf.Abs(aimX) > 0.1f || Mathf.Abs(aimY) > 0.1f)
+            {
+                float angle = Mathf.Atan2(aimX, -aimY) * Mathf.Rad2Deg;
+                _rb.rotation = angle;
+            }
+        }
+    }
+
+    // --- เพิ่มระบบชาร์จสำหรับ P2 ---
+    void HandleChargeAttackP2()
+    {
+        if (Input.GetButtonDown("ChargeP2"))
+        {
+            _isCharging = true;
+            _currentChargeTime = 0f;
+            if (_chargeSound != null)
+            {
+                _chargeAudioSource.clip = _chargeSound;
+                _chargeAudioSource.pitch = 0.8f;
+                _chargeAudioSource.Play();
+            }
+        }
+
+        if (_isCharging && Input.GetButton("ChargeP2"))
+        {
+            _currentChargeTime += Time.deltaTime;
+            float chargeRatio = Mathf.Clamp01(_currentChargeTime / _chargeTimeRequired);
+
+            if (_characterVisual != null)
+            {
+                float currentMagnitude = _shakeMagnitude * chargeRatio;
+                float offsetX = Mathf.Sin(Time.time * _shakeSpeed) * currentMagnitude;
+                float offsetY = Mathf.Cos(Time.time * _shakeSpeed * 1.2f) * currentMagnitude;
+                _characterVisual.localPosition = _visualInitialPos + new Vector3(offsetX, offsetY, 0);
+            }
+
+            if (_chargeAudioSource.isPlaying)
+                _chargeAudioSource.pitch = 0.8f + (chargeRatio * 0.7f);
+        }
+
+        if (Input.GetButtonUp("ChargeP2"))
+        {
+            if (_isCharging && _currentChargeTime >= _chargeTimeRequired)
+            {
+                FireLaserP2(); // ยิงเลเซอร์แบบไม่ต้องใช้เมาส์
+                if (CameraShake.instance != null) CameraShake.instance.Shake(0.2f, 0.3f);
+            }
+            StopChargeEffects();
+        }
+    }
+
+    void FireLaserP2()
+    {
+        if (_laserPrefab != null && _firePoint != null)
+        {
+            // P2 ยิงไปตามทิศที่ตัวละครหันหน้าอยู่ (transform.up)
+            GameObject laserObj = Instantiate(_laserPrefab, _firePoint.position, Quaternion.identity);
+            var beam = laserObj.GetComponent<LaserBeam>();
+            if (beam != null) beam.Fire(_firePoint.position, transform.up, _laserRange);
+
+            PlaySound(_laserShootSound != null ? _laserShootSound : _shootSound);
+        }
+    }
+
+    // --------------------------------------------------
+    // ระบบอื่นๆ คงเดิมทั้งหมด (Magnet, HP Regen, Shoot, etc.)
+    // --------------------------------------------------
 
     void SetupMagnet()
     {
@@ -100,10 +233,10 @@ public class PlayerController : MonoBehaviour
         magnetObj.transform.SetParent(this.transform);
         magnetObj.transform.localPosition = Vector3.zero;
 
-        magnetCollider = magnetObj.AddComponent<CircleCollider2D>();
-        magnetCollider.isTrigger = true;
-        magnetCollider.radius = 0f;
-        magnetCollider.enabled = false;
+        _magnetCollider = magnetObj.AddComponent<CircleCollider2D>();
+        _magnetCollider.isTrigger = true;
+        _magnetCollider.radius = 0f;
+        _magnetCollider.enabled = false;
 
         var detector = magnetObj.AddComponent<MagnetDetector>();
         detector.playerTransform = this.transform;
@@ -111,121 +244,59 @@ public class PlayerController : MonoBehaviour
 
     public void UpgradePickupRadius(float extraRadius)
     {
-        if (magnetCollider != null)
+        if (_magnetCollider != null)
         {
-            magnetCollider.enabled = true;
-            pickupRadius += extraRadius;
-            magnetCollider.radius = pickupRadius;
+            _magnetCollider.enabled = true;
+            _pickupRadius += extraRadius;
+            _magnetCollider.radius = _pickupRadius;
         }
     }
 
-    public void IncreaseMaxHealth(float percent)
-    {
-        if (playerHealth != null) playerHealth.IncreaseMaxHealth(percent);
-    }
-
-    void Update()
-    {
-        if (GameManager.instance != null && GameManager.instance.isGameOver) return;
-
-        if (Time.timeScale == 0f)
-        {
-            if (isCharging) StopChargeEffects();
-            return;
-        }
-
-        moveInput.x = Input.GetAxisRaw("Horizontal");
-        moveInput.y = Input.GetAxisRaw("Vertical");
-
-        HandleCooldownUI();
-        HandleFootstepSound();
-
-        bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-
-        if (Input.GetButtonDown("Fire1") && !isCharging && !isPointerOverUI) Shoot();
-
-        if (Input.GetKeyDown(KeyCode.E) && cooldownTimer <= 0 && hasHomingUpgrade) UseHomingSkill();
-
-        if (hasChargeAugment) HandleChargeAttack(isPointerOverUI);
-    }
-
-    void FixedUpdate()
-    {
-        if (GameManager.instance != null && GameManager.instance.isGameOver)
-        {
-            rb.linearVelocity = Vector2.zero;
-            return;
-        }
-
-        float currentSpeed = isCharging ? moveSpeed * 0.4f : moveSpeed;
-        rb.linearVelocity = moveInput.normalized * currentSpeed;
-
-        RotateTowardsMouse();
-    }
-
-    // --- ปรับปรุงระบบ HP REGEN (Single Loop Strategy) ---
     IEnumerator RegenerateHealthLoop()
     {
         while (true)
         {
-            yield return new WaitForSeconds(regenRate);
+            yield return new WaitForSeconds(_regenRate);
+            bool isOutsideDelay = Time.time - _lastDamageTime > _regenDelay;
 
-            // เงื่อนไขการฟื้นฟู: 
-            // 1. มีความสามารถ (canRegen)
-            // 2. เลือดไม่เต็มและไม่ตาย
-            // 3. เวลาปัจจุบันห่างจากเวลาที่โดนดาเมจล่าสุดมากกว่า regenDelay
-            bool isOutsideDelay = Time.time - lastDamageTime > regenDelay;
-
-            if (canRegen && isOutsideDelay && playerHealth != null)
+            if (_canRegen && isOutsideDelay && _playerHealth != null)
             {
-                if (playerHealth.currentHealth < playerHealth.maxHealth && playerHealth.currentHealth > 0)
-                {
-                    playerHealth.currentHealth += regenAmount;
-                    playerHealth.currentHealth = Mathf.Min(playerHealth.currentHealth, (int)playerHealth.maxHealth);
-                    playerHealth.UpdateHealthUI();
-                }
+                _playerHealth.Heal(_regenAmount);
             }
         }
     }
 
-    public void TakeDamage(int damage)
+    public void SetRegenActive(bool isActive) { _canRegen = isActive; }
+    public void SetRegenAmount(int amount) { _regenAmount = amount; }
+    public float GetMoveSpeed() { return _moveSpeed; }
+    public void SetMoveSpeed(float newSpeed) { _moveSpeed = newSpeed; }
+
+    public void TakeDamage(float damage)
     {
         if (GameManager.instance != null && GameManager.instance.isGameOver) return;
-
-        if (playerHealth != null) playerHealth.TakeDamage(damage);
+        if (_playerHealth != null) _playerHealth.TakeDamage(damage);
         if (DamageFlashEffect.instance != null) DamageFlashEffect.instance.StartFlash();
         if (CameraShake.instance != null) CameraShake.instance.Shake(0.2f, 0.2f);
-        if (hurtSound != null) PlaySound(hurtSound);
-
-        // บันทึกเวลาที่โดนดาเมจล่าสุด เพื่อให้ Loop Regen ทำงานร่วมกับ delay ได้แม่นยำ
-        lastDamageTime = Time.time;
-    }
-
-    // --- ระบบดั้งเดิม ---
-    void RotateTowardsMouse()
-    {
-        Vector3 worldMousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 lookDir = (Vector2)worldMousePos - rb.position;
-        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
-        rb.rotation = angle;
+        if (_hurtSound != null) PlaySound(_hurtSound);
+        _lastDamageTime = Time.time;
     }
 
     void Shoot()
     {
-        if (firePoint != null && bulletPrefab != null)
+        if (_firePoint != null && _bulletPrefab != null)
         {
-            Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            PlaySound(shootSound);
+            Instantiate(_bulletPrefab, _firePoint.position, _firePoint.rotation);
+            PlaySound(_shootSound);
         }
     }
 
     void UseHomingSkill()
     {
-        if (firePoint != null && homingBulletPrefab != null)
+        if (_firePoint != null && _homingBulletPrefab != null)
         {
-            Instantiate(homingBulletPrefab, firePoint.position, firePoint.rotation);
-            PlaySound(homingShootSound != null ? homingShootSound : shootSound);
-            cooldownTimer = skillCooldown;
+            Instantiate(_homingBulletPrefab, _firePoint.position, _firePoint.rotation);
+            PlaySound(_homingShootSound != null ? _homingShootSound : _shootSound);
+            _cooldownTimer = _skillCooldown;
         }
     }
 
@@ -233,36 +304,36 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1) && !isOverUI)
         {
-            isCharging = true;
-            currentChargeTime = 0f;
-            if (chargeSound != null)
+            _isCharging = true;
+            _currentChargeTime = 0f;
+            if (_chargeSound != null)
             {
-                chargeAudioSource.clip = chargeSound;
-                chargeAudioSource.pitch = 0.8f;
-                chargeAudioSource.Play();
+                _chargeAudioSource.clip = _chargeSound;
+                _chargeAudioSource.pitch = 0.8f;
+                _chargeAudioSource.Play();
             }
         }
 
-        if (isCharging && Input.GetMouseButton(1))
+        if (_isCharging && Input.GetMouseButton(1))
         {
-            currentChargeTime += Time.deltaTime;
-            float chargeRatio = Mathf.Clamp01(currentChargeTime / chargeTimeRequired);
+            _currentChargeTime += Time.deltaTime;
+            float chargeRatio = Mathf.Clamp01(_currentChargeTime / _chargeTimeRequired);
 
-            if (characterVisual != null)
+            if (_characterVisual != null)
             {
-                float currentMagnitude = shakeMagnitude * chargeRatio;
-                float offsetX = Mathf.Sin(Time.time * shakeSpeed) * currentMagnitude;
-                float offsetY = Mathf.Cos(Time.time * shakeSpeed * 1.2f) * currentMagnitude;
-                characterVisual.localPosition = visualInitialPos + new Vector3(offsetX, offsetY, 0);
+                float currentMagnitude = _shakeMagnitude * chargeRatio;
+                float offsetX = Mathf.Sin(Time.time * _shakeSpeed) * currentMagnitude;
+                float offsetY = Mathf.Cos(Time.time * _shakeSpeed * 1.2f) * currentMagnitude;
+                _characterVisual.localPosition = _visualInitialPos + new Vector3(offsetX, offsetY, 0);
             }
 
-            if (chargeAudioSource.isPlaying)
-                chargeAudioSource.pitch = 0.8f + (chargeRatio * 0.7f);
+            if (_chargeAudioSource.isPlaying)
+                _chargeAudioSource.pitch = 0.8f + (chargeRatio * 0.7f);
         }
 
         if (Input.GetMouseButtonUp(1))
         {
-            if (isCharging && currentChargeTime >= chargeTimeRequired)
+            if (_isCharging && _currentChargeTime >= _chargeTimeRequired)
             {
                 FireLaserAtMouse();
                 if (CameraShake.instance != null) CameraShake.instance.Shake(0.2f, 0.3f);
@@ -273,50 +344,50 @@ public class PlayerController : MonoBehaviour
 
     void StopChargeEffects()
     {
-        isCharging = false;
-        currentChargeTime = 0f;
-        if (chargeAudioSource != null && chargeAudioSource.isPlaying) chargeAudioSource.Stop();
-        if (characterVisual != null) characterVisual.localPosition = visualInitialPos;
+        _isCharging = false;
+        _currentChargeTime = 0f;
+        if (_chargeAudioSource != null && _chargeAudioSource.isPlaying) _chargeAudioSource.Stop();
+        if (_characterVisual != null) _characterVisual.localPosition = _visualInitialPos;
     }
 
     void FireLaserAtMouse()
     {
-        if (laserPrefab != null && firePoint != null)
+        if (_laserPrefab != null && _firePoint != null)
         {
-            Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0;
-            Vector3 fireDirection = (mousePos - firePoint.position).normalized;
+            Vector3 fireDirection = (mousePos - _firePoint.position).normalized;
 
-            GameObject laserObj = Instantiate(laserPrefab, firePoint.position, Quaternion.identity);
+            GameObject laserObj = Instantiate(_laserPrefab, _firePoint.position, Quaternion.identity);
             var beam = laserObj.GetComponent<LaserBeam>();
-            if (beam != null) beam.Fire(firePoint.position, fireDirection, laserRange);
+            if (beam != null) beam.Fire(_firePoint.position, fireDirection, _laserRange);
 
-            PlaySound(laserShootSound != null ? laserShootSound : shootSound);
+            PlaySound(_laserShootSound != null ? _laserShootSound : _shootSound);
         }
     }
 
     void HandleFootstepSound()
     {
-        if (footstepClip == null || moveInput.magnitude < 0.1f) { isStepReady = false; return; }
-        if (!isStepReady) { footstepTimer = footstepDelay; isStepReady = true; }
+        if (_footstepClip == null || _moveInput.magnitude < 0.1f) { _isStepReady = false; return; }
+        if (!_isStepReady) { _footstepTimer = _footstepDelay; _isStepReady = true; }
 
-        footstepTimer -= Time.deltaTime;
-        if (footstepTimer <= 0)
+        _footstepTimer -= Time.deltaTime;
+        if (_footstepTimer <= 0)
         {
-            PlaySound(footstepClip);
-            footstepTimer = footstepDelay;
+            PlaySound(_footstepClip);
+            _footstepTimer = _footstepDelay;
         }
     }
 
     void HandleCooldownUI()
     {
-        if (cooldownImage == null) return;
-        if (cooldownTimer > 0)
+        if (_cooldownImage == null) return;
+        if (_cooldownTimer > 0)
         {
-            cooldownTimer -= Time.deltaTime;
-            cooldownImage.fillAmount = cooldownTimer / skillCooldown;
+            _cooldownTimer -= Time.deltaTime;
+            _cooldownImage.fillAmount = _cooldownTimer / _skillCooldown;
         }
-        else cooldownImage.fillAmount = 0;
+        else _cooldownImage.fillAmount = 0;
     }
 
     void PlaySound(AudioClip clip)

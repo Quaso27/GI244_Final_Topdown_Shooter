@@ -5,54 +5,141 @@ using TMPro;
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
-    public float maxHealth = 100f;
-    public float currentHealth;
+    [SerializeField] private float _baseMaxHealth = 100f; 
+    [SerializeField] private float _maxHealth;
+    [SerializeField] private float _currentHealth;
 
     [Header("UI References")]
-    public Slider hpSlider;           // ลาก Slider สี่เหลี่ยมคางหมูมาใส่
-    public TextMeshProUGUI hpText;    // ลาก Text ที่แสดง "HP: 100 / 100" มาใส่
+    [SerializeField] private Slider _hpSlider;
+    [SerializeField] private TextMeshProUGUI _hpText;
+
+    private static PlayerHealth sharedSharedInstance;
+    private bool isSharedPool = false;
 
     void Start()
     {
-        currentHealth = maxHealth;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        int activePlayerCount = 0;
+
+        foreach (GameObject p in players)
+        {
+            if (p.activeInHierarchy) activePlayerCount++;
+        }
+
+        if (activePlayerCount > 1)
+        {
+            isSharedPool = true;
+
+            if (sharedSharedInstance == null)
+            {
+                sharedSharedInstance = this;
+                _maxHealth = _baseMaxHealth; 
+                _currentHealth = _maxHealth;
+                InitializeHealthUI();
+            }
+            else
+            {
+                _maxHealth = sharedSharedInstance._maxHealth;
+                _currentHealth = sharedSharedInstance._currentHealth;
+            }
+        }
+        else
+        {
+            isSharedPool = false;
+            _maxHealth = _baseMaxHealth;
+            _currentHealth = _maxHealth;
+            InitializeHealthUI();
+        }
+    }
+
+    private void InitializeHealthUI()
+    {
+        if (_hpSlider != null)
+        {
+            _hpSlider.maxValue = _maxHealth;
+        }
         UpdateHealthUI();
     }
 
     public void TakeDamage(float damage)
     {
+        if (isSharedPool && sharedSharedInstance != null && sharedSharedInstance != this)
+        {
+            sharedSharedInstance.TakeDamage(damage);
+            return;
+        }
+
         if (GameManager.instance != null && GameManager.instance.isGameOver) return;
 
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        _currentHealth -= damage;
+        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
         UpdateHealthUI();
 
-        if (currentHealth <= 0)
+        if (_currentHealth <= 0)
         {
-            if (GameManager.instance != null) GameManager.instance.GameOver();
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.GameOver();
         }
     }
 
     public void IncreaseMaxHealth(float percentAmount)
     {
-        float boost = maxHealth * percentAmount;
-        maxHealth += boost;
-        currentHealth += boost; // เพิ่มเลือดปัจจุบันให้ด้วย
+        if (isSharedPool && sharedSharedInstance != null && sharedSharedInstance != this)
+        {
+            sharedSharedInstance.IncreaseMaxHealth(percentAmount);
+            return;
+        }
+
+        if (percentAmount <= 0) return;
+
+        float boost = _maxHealth * percentAmount;
+        _maxHealth += boost;
+        _currentHealth += boost;
+
+        if (_hpSlider != null) _hpSlider.maxValue = _maxHealth;
+
+        UpdateHealthUI();
+    }
+
+    public void Heal(int amount)
+    {
+        if (isSharedPool && sharedSharedInstance != null && sharedSharedInstance != this)
+        {
+            sharedSharedInstance.Heal(amount);
+            return;
+        }
+
+        if (_currentHealth >= _maxHealth || _currentHealth <= 0) return;
+
+        _currentHealth += (float)amount;
+        _currentHealth = Mathf.Min(_currentHealth, _maxHealth);
         UpdateHealthUI();
     }
 
     public void UpdateHealthUI()
     {
-        // อัปเดตหลอดเลือด Slider
-        if (hpSlider != null)
+        float current = isSharedPool && sharedSharedInstance != null ? sharedSharedInstance._currentHealth : _currentHealth;
+        float max = isSharedPool && sharedSharedInstance != null ? sharedSharedInstance._maxHealth : _maxHealth;
+
+        if (_hpSlider != null)
         {
-            hpSlider.maxValue = maxHealth;
-            hpSlider.value = currentHealth;
+            _hpSlider.value = current;
         }
 
-        // อัปเดตตัวเลข HP : 100 / 100
-        if (hpText != null)
+        if (_hpText != null)
         {
-            hpText.text = "HP : " + Mathf.RoundToInt(currentHealth) + " / " + Mathf.RoundToInt(maxHealth);
+            _hpText.text = $"HP : {Mathf.RoundToInt(current)} / {Mathf.RoundToInt(max)}";
         }
+    }
+    private void OnDestroy()
+    {
+        sharedSharedInstance = null;
     }
 }

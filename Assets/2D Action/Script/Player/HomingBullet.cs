@@ -5,7 +5,7 @@ public class HomingBullet : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float speed = 15f;
-    public float rotateSpeed = 1500f; // เพิ่มให้สูงขึ้นเพื่อให้หันกลับมาหาเป้าได้ไว
+    public float rotateSpeed = 1500f;
     public float detectionRadius = 25f;
 
     [Header("Combat Settings")]
@@ -29,7 +29,6 @@ public class HomingBullet : MonoBehaviour
 
     void FixedUpdate()
     {
-        // ค้นหาเป้าหมาย
         if (target == null || !target.gameObject.activeInHierarchy)
         {
             target = FindClosestEnemy();
@@ -40,19 +39,14 @@ public class HomingBullet : MonoBehaviour
             Vector2 direction = (Vector2)target.position - rb.position;
             direction.Normalize();
 
-            // ใช้การคำนวณ Cross Product เพื่อหาแรงบิด
             float rotateAmount = Vector3.Cross(direction, transform.up).z;
 
-            // เพิ่มความแรงในการหมุน (Steering)
             rb.angularVelocity = -rotateAmount * rotateSpeed;
         }
         else
         {
-            // ถ้าไม่มีเป้า ให้ค่อยๆ ลดความเร็วมุมหมุนลง ไม่ให้หมุนเคว้ง
             rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, 0, Time.fixedDeltaTime * 5f);
         }
-
-        // บังคับความเร็วให้คงที่ตลอดเวลา เพื่อไม่ให้แรงชนทำความเร็วตก
         rb.linearVelocity = transform.up * speed;
     }
 
@@ -71,11 +65,9 @@ public class HomingBullet : MonoBehaviour
                 }
                 else
                 {
-                    // --- หัวใจสำคัญของการล็อคเป้าใหม่ ---
-                    target = FindClosestEnemy(); // หาตัวใหม่ทันที
+                    target = FindClosestEnemy(); 
                     if (target != null)
                     {
-                        // หันหน้าไปหาเป้าหมายใหม่ทันที "แบบฉับพลัน" เพื่อแก้แรงกระเด็น
                         Vector2 nextDir = (Vector2)target.position - rb.position;
                         float angle = Mathf.Atan2(nextDir.y, nextDir.x) * Mathf.Rad2Deg - 90f;
                         rb.rotation = angle;
@@ -103,7 +95,6 @@ public class HomingBullet : MonoBehaviour
         float distance = Mathf.Infinity;
         foreach (GameObject go in enemies)
         {
-            // เช็คเฉพาะตัวที่ยังมีชีวิตอยู่ (Active)
             if (!go.activeInHierarchy) continue;
 
             float curDistSq = (go.transform.position - transform.position).sqrMagnitude;

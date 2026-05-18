@@ -15,32 +15,25 @@ public class Bullet : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        // 1. สั่งให้กระสุนพุ่งไปทางด้านหน้าของวัตถุ (ใน 2D คือทิศทางที่หัวลูกศรสีเขียว/แดงชี้ไปตอน Spawn)
-        // โดยปกติระบบยิงที่เราทำจะ Spawn กระสุนให้หันไปหาเมาส์อยู่แล้ว
         rb.linearVelocity = transform.up * speed;
 
-        // 2. ปรับทิศทางของ Sprite ให้ตรงกับทิศทางการพุ่ง
-        // หมุนตัวมันเองตามค่า Offset ที่ตั้งไว้ใน Inspector
         transform.Rotate(0, 0, spriteRotationOffset);
 
-        // ทำลายตัวเองทิ้งเมื่อเวลาผ่านไป 2 วินาที
         Destroy(gameObject, 2f);
     }
 
     private void OnTriggerEnter2D(Collider2D hitInfo)
     {
-        // เช็คว่าชนศัตรูหรือไม่
         if (hitInfo.CompareTag("Enemy"))
         {
             EnemyBase enemy = hitInfo.GetComponent<EnemyBase>();
             if (enemy != null)
             {
-                enemy.TakeDamage(1); // ทำดาเมจ 1 หน่วย
+                enemy.TakeDamage(1); 
             }
-            Destroy(gameObject); // ชนแล้วทำลายกระสุน
+            Destroy(gameObject); 
         }
 
-        // เช็คว่าชนกำแพงหรือไม่
         if (hitInfo.CompareTag("Wall"))
         {
             Destroy(gameObject);

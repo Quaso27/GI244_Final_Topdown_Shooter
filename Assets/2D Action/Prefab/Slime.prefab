@@ -195,10 +195,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySlime
   health: 1
-  contactDamage: 10
+  contactDamage: 5
   scoreValue: 10
   deathSound: {fileID: 8300000, guid: f53bb8411338eb243b2bca8011902f18, type: 3}
-  deathVolume: 0.3
+  attackHitSound: {fileID: 8300000, guid: 6a1dc06db884f32499c04a2a8eee15b5, type: 3}
+  deathVolume: 0.4
   moveSpeed: 2
   detectionRadius: 2.5
   bodyRadius: 0.3
@@ -218,10 +219,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f8df61aa24e4c741b7074245fcab624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDropper
-  lootTable:
+  _lootTable:
   - itemPrefab: {fileID: 6030540734624439818, guid: 3da10fc37568bea4888ac98ae6b8b8ac, type: 3}
-    chance: 5
+    chance: 10
   - itemPrefab: {fileID: 6107076207835859405, guid: 5b50ee28dfc7af844991274042f4d709, type: 3}
-    chance: 5
+    chance: 10
   - itemPrefab: {fileID: 1277635228534918787, guid: ccf3460c884d051448d0e70ef0ab58cf, type: 3}
-    chance: 20
+    chance: 25

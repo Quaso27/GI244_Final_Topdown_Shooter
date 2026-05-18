@@ -3,60 +3,64 @@ using UnityEngine;
 
 public class ItemSpeedBoost : MonoBehaviour
 {
-    public float speedMultiplier = 5f;
-    public float duration = 3f;
-    public float despawnTime = 10f;
+    [Header("Settings")]
+    [SerializeField] private float speedMultiplier = 5f;
+    [SerializeField] private float duration = 3f;
+    [SerializeField] private float despawnTime = 10f;
 
-    private bool isCollected = false;
+    private bool _isCollected = false;
 
     private void Start()
     {
-        // ใช้คำสั่งนี้แทนเพื่อเริ่มนับถอยหลัง
-        Invoke("SelfDestroy", despawnTime);
+        Invoke(nameof(SelfDestroy), despawnTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // เพิ่ม !isCollected เพื่อป้องกันการเก็บซ้อนกัน
-        if (other.CompareTag("Player") && !isCollected)
+        if (other.CompareTag("Player") && !_isCollected)
         {
             PlayerController pc = other.GetComponent<PlayerController>();
+
             if (pc != null)
             {
-                isCollected = true;
-                // ยกเลิกการลบตัวเองที่ตั้งไว้ใน Start
-                CancelInvoke("SelfDestroy");
-
-                // ซ่อนไอเทมและปิด Collider ทันทีเพื่อให้เก็บได้แค่ครั้งเดียว
-                GetComponent<SpriteRenderer>().enabled = false;
-                GetComponent<Collider2D>().enabled = false;
-
-                StartCoroutine(SpeedBoostRoutine(pc));
+                ApplyCollectionEffect(pc);
             }
         }
     }
 
-    private void SelfDestroy()
+    private void ApplyCollectionEffect(PlayerController pc)
     {
-        if (!isCollected) Destroy(gameObject);
+        _isCollected = true;
+        CancelInvoke(nameof(SelfDestroy));
+
+        if (TryGetComponent<SpriteRenderer>(out var sr)) sr.enabled = false;
+        if (TryGetComponent<Collider2D>(out var col)) col.enabled = false;
+
+        StartCoroutine(SpeedBoostRoutine(pc));
     }
 
-    IEnumerator SpeedBoostRoutine(PlayerController pc)
+    private void SelfDestroy()
     {
-        // เก็บค่าความเร็วเดิมไว้ เพื่อความชัวร์เวลาลดค่าคืน
-        pc.moveSpeed += speedMultiplier;
-        Debug.Log("Speed Up! Current Speed: " + pc.moveSpeed);
+        if (!_isCollected)
+        {
+            Destroy(gameObject);
+        }
+    }
 
-        // ใช้ WaitForSecondsRealtime ถ้าเกมคุณมีการ Pause (Time.timeScale = 0)
-        yield return new WaitForSeconds(duration);
+    private IEnumerator SpeedBoostRoutine(PlayerController pc)
+    {
+        float boostAmount = speedMultiplier;
+        pc.SetMoveSpeed(pc.GetMoveSpeed() + boostAmount);
+
+        Debug.Log($"<color=green>Speed Up!</color> Current Speed: {pc.GetMoveSpeed()}");
+
+        yield return new WaitForSecondsRealtime(duration);
 
         if (pc != null)
         {
-            pc.moveSpeed -= speedMultiplier;
-            Debug.Log("Speed Normal. Current Speed: " + pc.moveSpeed);
+            pc.SetMoveSpeed(pc.GetMoveSpeed() - boostAmount);
+            Debug.Log($"<color=white>Speed Normal.</color> Current Speed: {pc.GetMoveSpeed()}");
         }
-
-        // ลบ Object ทิ้งหลังจากคืนค่าความเร็วเสร็จแล้วเท่านั้น
         Destroy(gameObject);
     }
 }

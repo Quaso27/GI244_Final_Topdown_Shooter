@@ -9,7 +9,10 @@ public class EnemyBase : MonoBehaviour
 
     [Header("Audio & Visuals")]
     public AudioClip deathSound;
+    public AudioClip attackHitSound; 
     [Range(0f, 1f)] public float deathVolume = 1.0f;
+
+    protected Transform playerTarget;
 
     protected bool isDead = false;
     protected bool isStunned = false;
@@ -28,6 +31,37 @@ public class EnemyBase : MonoBehaviour
     protected virtual void Start()
     {
         spawner = Object.FindFirstObjectByType<EnemySpawner>();
+
+        FindClosestPlayer();
+    }
+
+    protected virtual void Update()
+    {
+        if (isDead) return;
+
+        FindClosestPlayer();
+    }
+
+    protected void FindClosestPlayer()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        float closestDistance = Mathf.Infinity;
+        Transform target = null;
+
+        foreach (GameObject p in players)
+        {
+            if (p != null && p.gameObject.activeInHierarchy)
+            {
+                float distance = Vector2.Distance(transform.position, p.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    target = p.transform;
+                }
+            }
+        }
+
+        playerTarget = target;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
@@ -46,11 +80,26 @@ public class EnemyBase : MonoBehaviour
 
         if (target.CompareTag("Player"))
         {
-            var player = target.GetComponent<PlayerController>();
-            if (player != null)
+            var playerHealth = target.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
             {
-                player.TakeDamage(contactDamage);
-                Debug.Log(gameObject.name + " hit Player!");
+                playerHealth.TakeDamage(contactDamage);
+                Debug.Log(gameObject.name + " hit Player! Damage: " + contactDamage);
+
+                if (CameraShake.instance != null)
+                {
+                    CameraShake.instance.Shake(0.15f, 0.25f);
+                }
+
+                if (DamageFlashEffect.instance != null)
+                {
+                    DamageFlashEffect.instance.StartFlash();
+                }
+
+                if (attackHitSound != null && SoundManager.instance != null)
+                {
+                    SoundManager.instance.PlaySFX(attackHitSound, deathVolume);
+                }
             }
         }
     }
@@ -67,13 +116,11 @@ public class EnemyBase : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        // --- ส่วนที่เพิ่มเข้ามาเพื่อให้ไอเทมดร็อป (image_4b315a.png) ---
         ItemDropper dropper = GetComponent<ItemDropper>();
         if (dropper != null)
         {
             dropper.OnEnemyDeath();
         }
-        // --------------------------------------------------
 
         if (spawner != null) spawner.RecordEnemyDeath();
 
@@ -86,13 +133,12 @@ public class EnemyBase : MonoBehaviour
         PlayDeathEffects();
 
         if (anim != null) anim.SetTrigger("Die");
-
         if (col != null) col.enabled = false;
 
         if (rb != null)
         {
             rb.linearDamping = 5f;
-            rb.linearVelocity = Vector2.zero; // หยุดแรงส่งจากการเดินปกติ
+            rb.linearVelocity = Vector2.zero;
         }
 
         Destroy(gameObject, 0.6f);
@@ -102,7 +148,6 @@ public class EnemyBase : MonoBehaviour
     {
         if (deathSound == null) return;
 
-        // เรียกใช้ผ่าน SoundManager เพื่อให้เสียงเบาลงตาม Slider (image_4bac7b.png)
         if (SoundManager.instance != null)
         {
             SoundManager.instance.PlaySFX(deathSound, deathVolume);

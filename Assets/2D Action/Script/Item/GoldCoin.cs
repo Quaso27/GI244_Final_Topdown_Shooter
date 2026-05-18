@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GoldCoin : MonoBehaviour
 {
-    public int goldValue = 1; // หนึ่งเหรียญมีค่าเท่าไหร่
+    public int goldValue = 1; 
 
     private void OnTriggerEnter2D(Collider2D other)
     {

@@ -14,7 +14,7 @@ public class AugmentCard : ScriptableObject
     public void ApplyEffect(GameObject player)
     {
         PlayerController pc = player.GetComponent<PlayerController>();
-        PlayerHealth ph = player.GetComponent<PlayerHealth>(); 
+        PlayerHealth ph = player.GetComponent<PlayerHealth>();
 
         if (pc == null || ph == null) return;
 
@@ -24,18 +24,18 @@ public class AugmentCard : ScriptableObject
                 pc.UpgradePickupRadius(value);
                 break;
             case AugmentType.MaxHealth:
-                ph.IncreaseMaxHealth(value); 
+                ph.IncreaseMaxHealth(value);
                 break;
             case AugmentType.ChargeAttack:
                 pc.hasChargeAugment = true;
                 break;
             case AugmentType.HomingUnlock:
-                pc.hasHomingUpgrade = true; 
+                pc.hasHomingUpgrade = true;
                 break;
             case AugmentType.HealthRegen:
-                pc.canRegen = true;       
-                pc.regenAmount = (int)value; 
-                break;  
+                pc.SetRegenActive(true);
+                pc.SetRegenAmount((int)value);
+                break;
         }
     }
 }
